@@ -9,7 +9,7 @@ input newd,
 input [7:0] PRdata,
 input Pready,
 
-output reg Psel,Penable,Pslverr,
+output reg Psel,Penable,//Pslverr,
 output reg [3:0]  Paddr,
 output reg [7:0] PWdata,
 output reg Pwrite,
