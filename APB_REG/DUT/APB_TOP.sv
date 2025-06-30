@@ -33,7 +33,7 @@ APB_Master MASTER (clock, reset, new_data, data, addr, wr,
                   
                   
 APB_Slave_Reg SLAVE (pclk, preset_n, psel, penable, pwdata, paddr, pwrite,
-                     pslverr, prdata, pready );    
+                     pslverr, prdata, pready);    
                                    
 
 endmodule 
