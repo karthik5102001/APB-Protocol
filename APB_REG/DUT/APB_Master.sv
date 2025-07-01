@@ -108,6 +108,6 @@ begin
     end
 end
 
-assign data_out = ((psel)&&(penable)&&(wr == 1'b0)) ? prdata : 32'h0;
+assign data_out = ((pready)&&(wr == 1'b0)) ? prdata : 32'hz;
 
 endmodule

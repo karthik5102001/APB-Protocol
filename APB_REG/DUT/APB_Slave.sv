@@ -1,4 +1,4 @@
-module APB_Slave_Reg(
+    module APB_Slave_Reg(
     input pclk,
     input preset_n,
     input pwrite,
@@ -32,25 +32,45 @@ module APB_Slave_Reg(
     begin
         case(state)
         idle : begin
-             pready <= 1'b0;
-             prdata <= 32'h0;
-             addr <= 32'b0;
-             wdata <= 32'h0;
-        end
-        check_operation : begin
+         //   state <= check_operation;
             if(penable && psel && pwrite && paddr == 0)
             begin
-                state <= write_data;
-                addr <= paddr;
-                wdata <= pwdata;
+              // state = write_data;
+                addr = paddr;
+                wdata = pwdata;
+                GPIO_REG = wdata;
+                pready = 1'b1;
+                state = send_ready;
             end
             else if (penable && psel && !pwrite && paddr == 0)
                 begin
-               state <= read_data;
-                addr <= paddr;        
+             // state <= read_data;
+              prdata = GPIO_REG;
+                pready = 1'b1;
+              state = send_ready;
+                addr = paddr;   
                 end
         end
-        write_data : begin
+      /*  check_operation : begin /// removing this to make sure our ready is ready in next cycle itself
+            if(penable && psel && pwrite && paddr == 0)
+            begin
+               // state <= write_data;
+                state <= send_ready;
+                addr <= paddr;
+                wdata <= pwdata;
+                GPIO_REG <= wdata;
+                pready <= 1'b1;
+            end
+            else if (penable && psel && !pwrite && paddr == 0)
+                begin
+              // state <= read_data;
+              state <= send_ready;
+                addr <= paddr;   
+                 prdata <= GPIO_REG;
+                pready <= 1'b1;     
+                end
+        end 
+       write_data : begin
                 GPIO_REG <= wdata;
                 pready <= 1'b1;
                 state <= send_ready;
@@ -59,16 +79,16 @@ module APB_Slave_Reg(
                 prdata <= GPIO_REG;
                 pready <= 1'b1;
                 state <= send_ready;
-        end
+        end */
         send_ready : begin
                 pready <= 1'b0;
-                state <= check_operation;
+                state <= idle;
         end
         endcase
     
     end    
     end
     
-    assign pslverr = ((state == write_data)&&(state == read_data)&&(pready == 1'b1)) ? 1'b1 : 1'b0;
+    assign pslverr = ((state == send_ready)&&((penable == 1) && (pready == 0))) ? 1'b1 : 1'b0;
          
 endmodule
